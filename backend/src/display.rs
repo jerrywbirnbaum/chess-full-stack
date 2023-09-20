@@ -1,7 +1,7 @@
 
 use chess::{ALL_RANKS, ALL_FILES, Square, Color, Board};
 
-pub fn print_board(board: Board){
+pub fn _print_board(board: Board){
     for rank in ALL_RANKS.iter().rev(){
         for file in ALL_FILES.iter() {
             let square = Square::make_square(*rank, *file);

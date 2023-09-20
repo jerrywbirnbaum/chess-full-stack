@@ -1,4 +1,4 @@
-use chess::{Board, BoardStatus, MoveGen, Square};
+use chess::{Board, BoardStatus, MoveGen};
 use chess::Piece;
 use chess::Color;
 
@@ -28,40 +28,37 @@ pub fn simple_eval(board: Board) -> i32{
     black_eval += (board.pieces(Piece::Rook) & board.color_combined(Color::Black)).popcnt() * 5;
     black_eval += (board.pieces(Piece::Queen) & board.color_combined(Color::Black)).popcnt() * 9;
 
-    let mut eval: i32 = i32::try_from(white_eval).unwrap() - i32::try_from(black_eval).unwrap();
-    // if board.side_to_move() == Color::Black{
-    //     eval = -eval
-    // }
-    return eval;
+    let eval: i32 = i32::try_from(white_eval).unwrap() - i32::try_from(black_eval).unwrap();
+    eval
 }
 
-pub fn mini_max(board: Board, depth: i32, maximizing_player: bool, positions:  &mut u32) -> i32{
-    if depth == 0{
-        *positions = *positions + 1;
-        return simple_eval(board)
-    }
-    let mut best_eval;
-    if maximizing_player{
-        best_eval = -999999;
-        for m in MoveGen::new_legal(&board){
-            let mut new_board = board;
-            new_board = board.make_move_new(m);
-            let current_eval = mini_max(new_board, depth - 1, !maximizing_player, positions);
-            best_eval = std::cmp::max(current_eval, best_eval);
-        }
-    }
-    else{
-        best_eval = 999999;
-        for m in MoveGen::new_legal(&board){
-            let mut new_board = board;
-            new_board = board.make_move_new(m);
-            let current_eval = mini_max(new_board, depth - 1, !maximizing_player, positions);
-            best_eval = std::cmp::min(current_eval, best_eval);
-        }
-    }
+// pub fn mini_max(board: Board, depth: i32, maximizing_player: bool, positions:  &mut u32) -> i32{
+//     if depth == 0{
+//         *positions = *positions + 1;
+//         return simple_eval(board)
+//     }
+//     let mut best_eval;
+//     if maximizing_player{
+//         best_eval = -999999;
+//         for m in MoveGen::new_legal(&board){
+//             let mut new_board;
+//             new_board = board.make_move_new(m);
+//             let current_eval = mini_max(new_board, depth - 1, !maximizing_player, positions);
+//             best_eval = std::cmp::max(current_eval, best_eval);
+//         }
+//     }
+//     else{
+//         best_eval = 999999;
+//         for m in MoveGen::new_legal(&board){
+//             let mut new_board;
+//             new_board = board.make_move_new(m);
+//             let current_eval = mini_max(new_board, depth - 1, !maximizing_player, positions);
+//             best_eval = std::cmp::min(current_eval, best_eval);
+//         }
+//     }
 
-    return best_eval;
-}
+//     return best_eval;
+// }
 
 pub fn mini_max_alpha_beta(board: Board, depth: i32, mut alpha: i32, mut beta: i32, maximizing_player: bool, positions: &mut u32) -> i32{
     if depth == 0{
@@ -73,7 +70,7 @@ pub fn mini_max_alpha_beta(board: Board, depth: i32, mut alpha: i32, mut beta: i
     if maximizing_player{
         best_eval = -999999;
         for m in MoveGen::new_legal(&board){
-            let mut new_board = board;
+            let new_board;
             new_board = board.make_move_new(m);
             let current_eval = mini_max_alpha_beta(new_board, depth - 1, alpha, beta, !maximizing_player, positions);
             best_eval = std::cmp::max(current_eval, best_eval);
@@ -86,7 +83,7 @@ pub fn mini_max_alpha_beta(board: Board, depth: i32, mut alpha: i32, mut beta: i
     else{
         best_eval = 999999;
         for m in MoveGen::new_legal(&board){
-            let mut new_board = board;
+            let new_board;
             new_board = board.make_move_new(m);
             let current_eval = mini_max_alpha_beta(new_board, depth - 1, alpha, beta, !maximizing_player, positions);
             best_eval = std::cmp::min(current_eval, best_eval);
